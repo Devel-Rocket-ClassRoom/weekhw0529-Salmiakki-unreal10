@@ -250,13 +250,13 @@ void Homework02_Run()
 			Game = HitOrStand(Player, PlayingDeck, true);
 
 		}
-		GameStatus Game2 = DEFAULT;
+		GameStatus Game2 = Game == BUSTED? STANDED : DEFAULT;
 		while (Game2 == DEFAULT)
 		{
 			ShowUI(Dealer, Player, false);
 			Game2 = HitOrStand(Dealer, PlayingDeck);
 		}
-		printf("딜러 점수: %s\t", (Dealer.Points == 100 ? "BLACK JACK!" : (to_string(Dealer.Points)).c_str()));
+		printf("딜러 점수: %s\t", Game == BUSTED? "?" : (Dealer.Points == 100 ? "BLACK JACK!" : (to_string(Dealer.Points)).c_str()));
 		printf("플레이어 점수: %s\n", (Player.Points == 100 ? "BLACK JACK!" : (to_string(Player.Points)).c_str()));
 		if (Player.Points == Dealer.Points)
 		{
