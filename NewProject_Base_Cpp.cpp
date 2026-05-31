@@ -24,11 +24,11 @@ struct CardPiles
 };
 struct Participant
 {
-	char* name; // 참가자 이름
-	Card* Hand; // 참가자 패
+	string name; // 참가자 이름
+	CardPiles Hand; // 참가자 패
 };
 
-//초기덱(52장) 만들기		/리턴값.Cards 동적할당
+//초기덱(52장) 만들기		/리턴값 CardPiles.Cards 동적할당
 CardPiles CreateDeck()
 {
 	CardPiles D;
@@ -46,7 +46,7 @@ CardPiles CreateDeck()
 				Deck[index].value = 10;
 			else
 				Deck[index].value = 11;
-			cout << Deck[index].suite << Deck[index].name << " " << Deck[index].value << endl;
+			//cout << Deck[index].suite << Deck[index].name << " " << Deck[index].value << endl;
 			index++;
 		}
 	}
@@ -64,45 +64,62 @@ void ShuffleDeck(CardPiles& Deck)
 		int RandomIndex = GetRandomRange(0, i);
 		Deck.Cards[i] = Deck.Cards[RandomIndex];
 		Deck.Cards[RandomIndex] = temp;
-		cout << Deck.Cards[i].suite << Deck.Cards[i].name << " " << Deck.Cards[i].value << endl;
+		//cout << Deck.Cards[i].suite << Deck.Cards[i].name << " " << Deck.Cards[i].value << endl;
 
 	}
 }
 
 // 드로우
-Card* DrawDeck(Card* Deck, int HowMany=1)		//리턴값 동적할당
+CardPiles DrawDeck(CardPiles& Deck, int HowMany=1)		//리턴값 Card* 동적할당
 {
 	while (HowMany > 0)
 	{
-		Card* DrawnCards = new Card[HowMany];
+		CardPiles DrawnCards;
+		DrawnCards.Cards = new Card[HowMany];
 		for (int i = 0; i < HowMany; i++)
 		{
-			DrawnCards[i] = Deck[i];
-			Deck[i] = Deck[sizeof(*Deck) / sizeof(Card) - 1 - i];
+			DrawnCards.Cards[i] = Deck.Cards[i];
+			Deck.Cards[HowMany-1-i] = Deck.Cards[Deck.Size-1-i];
 		}
+		Deck.Size -= HowMany;
+		DrawnCards.Size = HowMany;
 		return DrawnCards;
 	}
 }
 
+// 카드 보여주기
+void ShowCards(CardPiles Deck)
+{
+	for (int i =0; i <Deck.Size; i++)
+	{
+		cout << Deck.Cards[i].suite << Deck.Cards[i].name << " " << Deck.Cards[i].value << endl;
+	}
+}
 
 
 int main()
 {
-//플레이어, 딜러 인스턴스 생성
-
-	//Participant Dealer;
-	//Participant Player;
+	//플레이어, 딜러 인스턴스 생성
+	srand((unsigned int)time(NULL));
+	Participant Dealer;
+	Participant Player;
 	CardPiles PlayingDeck = CreateDeck();
-	
-	ShuffleDeck(PlayingDeck);
-	
-	/*for (Card c : PlayingDeck)
-	{
-		cout << c.suite << c.name << " ";
-	}*/
-	//cout << PlayingDeck[0].suite << PlayingDeck[0].name << " " << PlayingDeck[0].value << endl;
-}
 
+	ShuffleDeck(PlayingDeck);
+
+	Dealer.Hand = DrawDeck(PlayingDeck, 2);
+	Player.Hand = DrawDeck(PlayingDeck, 2);
+	//ShowCards(PlayingDeck);
+	cout << "--플레이어 패--" << endl;
+	ShowCards(Player.Hand);
+	cout << "--딜러 패-" << endl;
+	ShowCards(Dealer.Hand);
+	cout << "--남은 덱-" << endl;
+	ShowCards(PlayingDeck);
+	delete[] Dealer.Hand.Cards;
+	delete[] Player.Hand.Cards;
+	delete[] PlayingDeck.Cards;
+}
 //블랙잭
 
 // 참가자의 패를 가변 배열로 동적할당 
