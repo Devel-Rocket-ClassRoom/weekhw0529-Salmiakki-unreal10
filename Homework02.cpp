@@ -270,7 +270,9 @@ void Homework02_Run()
 		{
 			cout << "딜러가 승리했습니다!" << endl;
 		}
-
+		delete[] Dealer.Hand.Cards;
+		delete[] Player.Hand.Cards;
+		delete[] PlayingDeck.Cards;
 		char Choice;
 		cout << "게임을 계속하시겠습니까? (y/n): ";
 		cin >> Choice;
